@@ -19,7 +19,7 @@
         let boxy = 30;                                  // y location of upper corner box
         let boxwidth = 350;                             // box width
         let boxheight = 250;                            // box height
-        let ballrad = 10;                               // radius of ball
+        let ballrad = 20;                               // radius of ball
 
         let boxboundx = boxwidth+boxx-ballrad           // Right Boundary
         let boxboundy = boxheight+boxy-ballrad          // Bottom Boundary
@@ -32,13 +32,40 @@
 
         let ctx;                                        // Variable holding canvas context
 
+        let grad;
+
+        let color;
+
         let ballvx = 4;                                 // Initial horizontal displacement
         let ballvy = 8;                                 // Initial vertical displacement
 
+        let img = new Image();
+
+        img.src='./images/pearlPhoto.jpg';
+
+        let hue = [
+            [255,0,0],
+            [255,255,0],
+            [0,255,0],
+            [0,255,255],
+            [0,0,255],
+            [255,0,255]
+
+        ];
+
         function init(){
+            let h;
             ctx = document.getElementById('canvas').getContext('2d');       // Set the ctx variable
+            grad= ctx.createLinearGradient(boxx,boxy,boxx+boxwidth,boxy+boxheight);     // Create and assign a gradient value
+
+            for(h=0; h<hue.length;h++){
+                color = 'rgb('+hue[h][0]+','+hue[h][1]+','+hue[h][2]+')';
+                grad.addColorStop(h*1/hue.length,color);
+
+            }
+
+            ctx.fillStyle = grad;                                        // Set fill style
             ctx.lineWidth = ballrad;                                        // Set line width
-            ctx.fillStyle = 'red';                                        // Set fill style
             moveball();                                 // Invoke moveball function the first time to move, check, and display the ball.
             setInterval(moveball,100);                  // Invoking moveball() 10 times every second
 
@@ -48,10 +75,18 @@
         function moveball(){
             ctx.clearRect(boxx, boxy, boxwidth, boxheight);             // Clear box including any paint from a ball
             moveandcheck();                             // Do the check and then move the ball
+
+            ctx.drawImage(img,ballx-ballrad,bally-ballrad,2*ballrad,2*ballrad);     // Draw an image
+
+            ctx.fillRect(boxx,boxy,ballrad,boxheight);                  // Draw the left wall.
+            ctx.fillRect(boxx+boxwidth-ballrad,boxy,ballrad,boxheight); // Draw the right wall.
+            ctx.fillRect(boxx,boxy,boxwidth,ballrad);                   // Draw the top wall.
+            ctx.fillRect(boxx,boxy+boxheight-ballrad,boxwidth,ballrad); // Draw the bottom wall
+
             ctx.beginPath();                            // Startpath
             ctx.arc(ballx, bally, ballrad, 0, Math.PI*2, true);     // Set up to draw of circle at current location of ball
             ctx.fill();                                 // this fills the complete circle
-            ctx.srokeRect(boxx, boxy, boxwidth,boxheight);      // Draw Rectangle outline
+            // ctx.srokeRect(boxx, boxy, boxwidth,boxheight);      // Draw Rectangle outline
 
         }
 
@@ -61,7 +96,7 @@
             
             if(nballx>boxboundx){                       // Is this x value beyond the right wall?
                 ballvx =-ballvx;                        // If so change horizontal displacement
-                nballx=boxdoundx;                       // Set the next x to be exactly at this boundary
+                nballx=boxboundx;                       // Set the next x to be exactly at this boundary
 
             }            
             if(nballx<inboxboundx){                     // Is this x value less than the left boundary?
