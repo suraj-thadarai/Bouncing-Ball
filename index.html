@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bouncing-Ball with Inputs</title>
+    <style>
+        form {
+            width: 330px;
+            margin: 20px;
+            background-color: brown;
+            padding: 20px;
+        }
+    </style>
+    <script>
+        let boxx = 20;                                  // x location of upper corner box
+        let boxy = 30;                                  // y location of upper corner box
+        let boxwidth = 350;                             // box width
+        let boxheight = 250;                            // box height
+        let ballrad = 10;                               // radius of ball
+
+        let boxboundx = boxwidth+boxx-ballrad           // Right Boundary
+        let boxboundy = boxheight+boxy-ballrad          // Bottom Boundary
+
+        let inboxboundx = boxx + ballrad                // Left Boundary
+        let inboxboundy = boxy+ ballrad                 // Top Boundary
+
+        let ballx = 50;                                 // Initial x position of ball
+        let bally = 60;                                 // Initial y position of ball
+
+        let ctx;                                        // Variable holding canvas context
+
+        let ballvx = 4;                                 // Initial horizontal displacement
+        let ballvy = 8;                                 // Initial vertical displacement
+
+        function init(){
+            ctx = document.getElementById('canvas').getContext('2d');       // Set the ctx variable
+            ctx.lineWidth = ballrad;                                        // Set line width
+            ctx.fillStyle = 'red';                                        // Set fill style
+            moveball();                                 // Invoke moveball function the first time to move, check, and display the ball.
+            setInterval(moveball,100);                  // Invoking moveball() 10 times every second
+
+
+        }
+
+        function moveball(){
+            ctx.clearRect(boxx, boxy, boxwidth, boxheight);             // Clear box including any paint from a ball
+            moveandcheck();                             // Do the check and then move the ball
+            ctx.beginPath();                            // Startpath
+            ctx.arc(ballx, bally, ballrad, 0, Math.PI*2, true);     // Set up to draw of circle at current location of ball
+            ctx.fill();                                 // this fills the complete circle
+            ctx.srokeRect(boxx, boxy, boxwidth,boxheight);      // Draw Rectangle outline
+
+        }
+
+        function moveandcheck() {
+            let nballx=ballx+ballvx;                    // Set tentative next x position
+            let nbally=bally+ballvy;                    // Set tentative next y position
+            
+            if(nballx>boxboundx){                       // Is this x value beyond the right wall?
+                ballvx =-ballvx;                        // If so change horizontal displacement
+                nballx=boxdoundx;                       // Set the next x to be exactly at this boundary
+
+            }            
+            if(nballx<inboxboundx){                     // Is this x value less than the left boundary?
+                nballx=inboxboundx;                     // If so, set the x value to be exactly at the boundary.
+                ballvx=-ballvx;                         // Change the Horizonatl displacement
+
+            }
+            if(nbally>boxboundy){                       // Is the y value beyond the bottom boundary?
+                nbally=boxboundy;                       // If so, set the y value to be exactly at the boundary
+                ballvy=-ballvy;                         // Change the vertical displacement
+
+            }
+            if(nbally<boxboundy){                       // Is the y value less than the top boundary?
+                nbally=inboxboundy;                     // If so, set the y value to be exactly the boundary.
+                ballvy=-ballvy;                         // Change the vertical displacement
+
+            }
+
+            ballx = nballx;                             // Set the ball x position to nballx
+            bally = nbally;                             // Set the ball y position to nbally
+            
+        }
+
+        function change(){
+            ballvx = Number(document.f.hv.value);       // Convert input to number and assign to ballvx
+            ballvy = Number(document.f.vv.value);       // Convert input to number and assign to ballvy
+
+            return false;                               // Return false to make sure there isn't page reload
+
+        }
+
+    </script>
+</head>
+
+<body onload="init();">
+    <canvas id="canvas" width="900" height="400" style="border: 2px solid red">
+
+    </canvas>
+    <br>
+
+    <form name="f" id="f" onsubmit="return change();">
+
+        <!-- Label an input field for horizontal velocity -->
+        Horizonatal Velocity <input name="hv" id="hv" value="4" type="number" min="-10" max="10">  
+        <br>
+        <!-- Label an input field for vertical velocity -->
+        Vertical Velocity <input name="vv" id="hv" value="8" type="number" min="-10" max="10">  
+        <br>
+        <input type="submit" value="CHANGE">
+
+
+    </form>
+
+    
+
+</body>
+
+</html>
